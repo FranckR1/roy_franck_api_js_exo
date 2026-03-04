@@ -1,21 +1,19 @@
-const mariadb = require('mariadb');
+const mysql = require('mysql2/promise');
 
-const pool = mariadb.createPool({
-    host: process.env.MARIADB_HOST,
-    user: process.env.MARIADB_USER,
-    password: process.env.MARIADB_ROOT_PASSWORD,
-    database: process.env.MARIADB_DATABASE,
+const pool = mysql.createPool({
+    host: process.env.MYSQL_HOST,
+    user: process.env.MYSQL_USER,
+    password: process.env.MYSQL_PASSWORD,
+    database: process.env.MYSQL_DATABASE,
 });
 
 pool.getConnection()
     .then(conn => {
-        console.log('Connexion à MariaDB réussie !');
+        console.log('Connexion à MySQL réussie !');
         conn.release();
     })
     .catch(err => {
-        console.error('Erreur de connexion à MariaDB:', err.message);
+        console.error('Erreur de connexion à MySQL:', err.message);
     });
 
-export const getPool = () => {
-    return pool;
-};
+module.exports = { pool };

@@ -1,15 +1,16 @@
 services:
-    mariadb:
-        image: mariadb:latest
+    mysql:
+        image: mysql:latest
         environment:
-            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-            MARIADB_USER: ${MARIADB_USER}
-            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
         ports:
-            - '3306:3306'
+            - ${MYSQL_PORT}
         volumes:
-            - './volumes/mariadb/data:/var/lib/mysql'
-            - './volumes/mariadb/scripts:/docker-entrypoint-initdb.d'
+            - './volumes/mysql/data:/var/lib/mysql'
+            - './volumes/mysql/scripts:/docker-entrypoint-initdb.d'
 
     phpmyadmin:
         image: phpmyadmin/phpmyadmin:latest
@@ -19,4 +20,4 @@ services:
         ports:
             - "${PORT_PHP_MYADMIN}:80"
         depends_on:
-            - mariadb
+            - mysql
