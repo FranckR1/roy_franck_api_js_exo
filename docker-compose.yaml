@@ -1,0 +1,22 @@
+services:
+    mariadb:
+        image: mariadb:latest
+        environment:
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+            MARIADB_USER: ${MARIADB_USER}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD}
+        ports:
+            -   '3306:3306'
+        volumes:
+            - './volumes/mariadb/data:/var/lib/mysql'
+            - './volumes/mariadb/scripts:/docker-entrypoint-initdb.d'
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin:latest
+        environment:
+            PMA_HOST: ${PMA_HOST}
+            PMA_PORT: ${PMA_PORT}
+        ports:
+            - "${PORT_PHP_MYADMIN}:80"
+        depends_on:
+            - mariadb
