@@ -6,7 +6,8 @@ const { productSchema } = require("./product.schema");
 
 router.get('/products', productsController.getAllProducts);
 router.get('/products/:id', productsController.getProductById);
-// router.post('/products', productsController.createProduct);
-router.post('/products', validateData(productSchema), productsController.createProductZod);
+router.post('/products', validateData(productSchema), productsController.createProduct);
+router.put('/products/:id', productsController.updateProduct);
+router.delete('/products/:id', productsController.deleteProduct);
 
 module.exports = router;
