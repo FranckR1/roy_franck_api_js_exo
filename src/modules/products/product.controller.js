@@ -2,7 +2,8 @@ const productsService = require('./product.service');
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await productsService.getAllProducts();
+        const name = req.query.name
+        const products = await productsService.getAllProducts(name);
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ error: 'Erreur serveur' });
