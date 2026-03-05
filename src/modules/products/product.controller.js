@@ -1,7 +1,7 @@
 const productsService = require('./product.service');
 
 let count = 0;
-const max = 50;
+const max = 100;
 const getAllProducts = async (req, res) => {
     try {
         count++
@@ -9,6 +9,7 @@ const getAllProducts = async (req, res) => {
         const products = await productsService.getAllProducts(name);
         res.setHeader('X-RateLimit-Limit', max);
         res.setHeader('X-RateLimit-Remaining', max - count);
+        res.setHeader('Cache-Control', 'public, max-age=600, must-revalidate');
         if (count > max) {
             return res.status(429).json({ error: 'Trop de requêtes' });
         }
