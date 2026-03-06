@@ -1,53 +1,65 @@
 const productsService = require('./product.service');
 
-const getAllProducts = (req, res) => {
+let count = 0;
+const max = 100;
+const getAllProducts = async (req, res) => {
     try {
-        const products = productsService.getAllProducts();
+        count++
+        const name = req.query.name
+        const products = await productsService.getAllProducts(name);
+        res.setHeader('X-RateLimit-Limit', max);
+        res.setHeader('X-RateLimit-Remaining', max - count);
+        res.setHeader('Cache-Control', 'public, max-age=600, must-revalidate');
+        if (count > max) {
+            return res.status(429).json({ error: 'Trop de requêtes' });
+        }
         res.status(200).json(products);
     } catch (error) {
         res.status(500).json({ error: 'Erreur serveur' });
     }
 };
 
-const getProductById = (req, res) => {
+const getProductById = async (req, res) => {
     try {
-        const id = parseInt(req.params.id, 10);
-        const product = productsService.getProductById(id);
-        if (!product) {
-            return res.status(404).json({ error: 'Produit introuvable' });
-        }
+        const product = await productsService.getProductById(req.params.id);
         res.status(200).json(product);
     } catch (error) {
-        res.status(500).json({ error: 'Erreur serveur' });
+        res.status(404).json({ error: error.message })
     }
 };
 
-// const createProduct = (req, res) => {
-//     try {
-//         const { name, price } = req.body;
-//         if (!name || !price) {
-//             return res.status(400).json({ error: 'Champs manquants' });
-//         }
-//
-//         const newProduct = productsService.createProduct({ name, price });
-//         res.status(201).json(newProduct);
-//     } catch (error) {
-//         res.status(500).json({ error: 'Erreur serveur' });
-//     }
-// };
-
-const createProductZod = (req, res) => {
+const createProduct = async (req, res) => {
     try {
-        const newProduct = productsService.createProductZod(req.body);
+        const newProduct = await productsService.createProduct(req.body);
         res.status(201).json(newProduct);
     } catch (error) {
-        res.status(500).json({ error: 'Erreur serveur' });
+        res.status(404).json({ error: error.message })
     }
 };
+
+const updateProduct = async (req, res) => {
+    try {
+        const updated = await productsService.updateProduct(req.params.id, req.body);
+        res.status(200).json(updated);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        await productsService.deleteProduct(req.params.id);
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+};
+
 
 module.exports = {
     getAllProducts,
     getProductById,
-    // createProduct,
-    createProductZod
+    createProduct,
+    updateProduct,
+    deleteProduct,
 }
